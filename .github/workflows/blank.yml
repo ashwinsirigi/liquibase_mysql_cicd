@@ -1,15 +1,6 @@
 name: Database Migration
 
-on: 
-
- # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: 
-	   - main
-	paths:
-	   - 'dbscripts/**' 
-	 #I are going to create a new folder dbscripts to place all change scripts. In future if we place any new files and commit the change then workflow will trigger the pipeline and starts the deployment.  
-
+on: [push]
 
 jobs:
   migrate:
@@ -58,8 +49,6 @@ jobs:
         done
 
     # Run the migrations
-	
-	
     
 
 
