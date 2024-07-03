@@ -1,1 +1,2 @@
-# liquidbase_mysql_cicd
+# liquibase_mysql_cicd
+Liquibase MySQL CICD Configuration
