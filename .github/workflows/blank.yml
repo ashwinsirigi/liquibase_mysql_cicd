@@ -1,36 +1,73 @@
-# This is a basic workflow to help you get started with Actions
+name: Database Migration
 
-name: CI
+on: 
 
-# Controls when the workflow will run
-on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
+ # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches: 
+	   - main
+	paths:
+	   - 'dbscripts/**' 
+	 #I are going to create a new folder dbscripts to place all change scripts. In future if we place any new files and commit the change then workflow will trigger the pipeline and starts the deployment.  
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  migrate:
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    services:
+        mysql:
+          image: mysql:8.0
+          ports:
+            - 3306:3306
+          env:
+            MYSQL_ROOT_PASSWORD: rootpassword
+            MYSQL_USER: testuser
+            MYSQL_PASSWORD: testpassword
+          options: >-
+            --name mysql-db
+            --health-cmd="mysqladmin ping --silent"
+            --health-interval=10s
+            --health-timeout=5s
+            --health-retries=3
+  
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+    - name: Wait for MySQL to be ready
+      run: |
+        for i in {30..0}; do
+            if docker exec mysql-db mysql -u testuser -ptestpassword -e "SELECT 1" > /dev/null 2>&1; then
+                break
+            fi
+            echo 'MySQL not ready yet...'
+            sleep 1
+        done
+    
+    - name: Initialize Database Schemas and Grant Permissions
+      run: |
+        docker exec -i mysql-db mysql -u root -prootpassword < $GITHUB_WORKSPACE/init.sql
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+    - name: Display All Databases and Users Table Schema
+      run: |
+        echo "Listing all databases and 'users' table schema for each database:"
+        for db in schema1 schema2 schema3 schema4 schema5 schema6 schema7 schema8 schema9 schema10; do
+            echo "Checking database: $db"
+            docker exec -i mysql-db mysql -u testuser -ptestpassword -e "USE $db; SHOW CREATE TABLE users;"
+        done
+
+    # Run the migrations
+	
+	
+    
+
+
+    # Display All Databases and Users Table Schema (again) to confirm the migration
+    - name: Display All Databases and Users Table Schema
+      run: |
+        echo "Listing all databases and 'users' table schema for each database:"
+        for db in schema1 schema2 schema3 schema4 schema5 schema6 schema7 schema8 schema9 schema10; do
+            echo "Checking database: $db"
+            docker exec -i mysql-db mysql -u testuser -ptestpassword -e "USE $db; SHOW CREATE TABLE users;"
+        done
