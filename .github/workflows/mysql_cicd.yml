@@ -71,7 +71,7 @@ jobs:
         DB_DRIVER="com.mysql.cj.jdbc.Driver"
         
         docker run  -e INSTALL_MYSQL=true --rm --network my-network \
-        -v $GITHUB_WORKSPACE/dbscripts:/liquibase/changelog \
+        -v $GITHUB_WORKSPACE/dbscripts/deploy:/liquibase/changelog \
          #-v $GITHUB_WORKSPACE/masterChangeLog.xml:/liquibase/changelog.xml \
         -v $(pwd)/mysql-connector-java.jar:/liquibase/lib/mysql-connector-java.jar $LIQUIBASE_IMAGE \
           --changeLogFile=${CHANGELOG_FILE} \
