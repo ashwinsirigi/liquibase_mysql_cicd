@@ -48,7 +48,7 @@ jobs:
     - name: Run Liquibase migrations
       run: |
         LIQUIBASE_IMAGE="liquibase/liquibase"
-        CHANGELOG_FILE="/liquibase/changelog/db.changelog.xml"
+        CHANGELOG_FILE="/liquibase/changelog/change.sql"
         URL_PREFIX="jdbc:mysql://mysql-db:3306/"
 
         for db in schema1 schema2 schema3 schema4 schema5 schema6 schema7 schema8 schema9 schema10; do
