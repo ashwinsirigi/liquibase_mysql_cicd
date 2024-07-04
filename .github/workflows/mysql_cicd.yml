@@ -26,10 +26,7 @@ jobs:
           -e MYSQL_PASSWORD=testpassword \
           -p 3306:3306 \
           mysql:8.0 \
-          --health-cmd="mysqladmin ping --silent" \
-          --health-interval=10s \
-          --health-timeout=5s \
-          --health-retries=3
+
 
     - name: Wait for MySQL to be ready
       run: |
