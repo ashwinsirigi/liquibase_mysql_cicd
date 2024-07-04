@@ -38,3 +38,15 @@ jobs:
           echo 'MySQL not ready yet...'
           sleep 1
         done
+
+    - name: Initialize Database Schemas and Grant Permissions
+      run: docker exec -i mysql-db mysql -u root -prootpassword < $GITHUB_WORKSPACE/init.sql
+
+    - name: Display All Databases and Users Table Schema
+      run: |
+        echo "Listing all databases and 'users' table schema for each database:"
+        for db in schema1 schema2 schema3 schema4 schema5 schema6 schema7 schema8 schema9 schema10; do
+          echo "Checking database: $db"
+          docker exec -i mysql-db mysql -u testuser -ptestpassword -e "USE $db; SHOW CREATE TABLE users;"
+        done    
+
