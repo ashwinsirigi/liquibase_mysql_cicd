@@ -65,7 +65,7 @@ jobs:
     - name: Run Liquibase connection test
       run: |
         LIQUIBASE_IMAGE="liquibase/liquibase"
-        CHANGELOG_FILE="masterChangeLog.xml"
+        CHANGELOG_FILE="/masterChangeLog.xml"
         URL_PREFIX="jdbc:mysql://mysql-db:3306/schema1"
         LIQUIBASE_LICENSEKEY="ABwwGgQUDvg+TwPk6F7EmjJg6gLEDLZj3OwCAgQAJJ5Jc0vNRRNw2+eZgro/35pG6BZu+MvhRd+vS9n5TzBhC0NcrYT8iO6BB90jcxfL/0mm0OIMe+Pxav/1lw9DjQo7b6Ubf5rnXo9yFnm2Szo8E2+A5x/Fdgg57ah2OGQFVJUD1kNrHNTSxeu0UN2yevASADRTfgiSC1FPo32X/B3LSr29ItF0qsTSbFONdbOFASSaAxI9ZAsIEG18WfZfSNMn0N7lRdRpQekxjGngepZiBY0S5I4lkL3mCikbWk8R7KfmATWUvVXpNP8tbSPCbAe/vRrgdX4QyakARO+jwddwinlMoF6afkBTDJ3OqQ9jFOMFeCb9EJPI608mlHjYVytQgQ1kwsEkdjM1lT+Dz8mtXc/XBagHFrgxutAVZrjQB7MxqasiLNpJEExO80oy6QWaEkTuMSjx29sfU77OYNV9GBUZ1iA3fny1lq98cMYGj1f57tJr8JFFZ/di8V0QJdx7t/7t3JjFPEFuubPGuv3RU47eR/MdFsi57H8dBxmaQQqxlNyxBilUUXWEm0E87gERv4QHgNh1g+RGXhcWN6YaQqFHyaufw0F1VGmDsgKK/C7drQdrXHC5HxCL5wQs2xhIdcDtZYW8goF7oud/cuJklq/YotaU+EEGoFYewGcOSSi7P1PlWnvgHvQkye7gh0W6dblgSoJv"
         DB_DRIVER="com.mysql.cj.jdbc.Driver"
