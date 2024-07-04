@@ -11,7 +11,7 @@ jobs:
 
     services:
       mysql:
-        image: mysql:8.0
+        image: mysql:8.0-cj
         ports:
           - 3306:3306
         env:
@@ -62,6 +62,8 @@ jobs:
           --password=testpassword \
           --license-key=${LIQUIBASE_LICENSEKEY} \
           --driver=${DB_DRIVER} \
+          --classpath=/liquibase/lib/mysql-connector-java.jar
+          
           update
 
     - name: Display All Databases and Users Table Schema
