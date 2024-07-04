@@ -57,7 +57,7 @@ jobs:
           echo "change.sql file not found!"
           exit 1
         else
-          echo "change.sql file exists."
+          echo "change.sql file exists $GITHUB_WORKSPACE/dbscripts/change.sql"
         fi      
         
     - name: Run Liquibase connection test
