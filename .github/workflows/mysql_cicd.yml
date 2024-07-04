@@ -55,11 +55,11 @@ jobs:
 
     - name: Verify change.sql file exists
       run: |
-        if [ ! -f "$GITHUB_WORKSPACE/dbscripts/change.sql" ]; then
+        if [ ! -f "$GITHUB_WORKSPACE/masterChangeLog.xml" ]; then
           echo "change.sql file not found!"
           exit 1
         else
-          echo "change.sql file exists $GITHUB_WORKSPACE/dbscripts/change.sql"
+          echo "change.sql file exists $GITHUB_WORKSPACE/masterChangeLog.xml"
         fi      
         
     - name: Run Liquibase connection test
