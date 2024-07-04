@@ -58,6 +58,7 @@ jobs:
               --username=testuser \
               --password=testpassword \
               --changeLogFile=$CHANGELOG_FILE \
+              --license-key=${{secrets.LIQUIBASE_LICENSEKEY}}
               connect
         done
 
