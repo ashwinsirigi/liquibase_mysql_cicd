@@ -40,7 +40,7 @@ jobs:
         done
 
     - name: Initialize Database Schemas and Grant Permissions
-      run: docker exec -i mysql-db mysql -u root -prootpassword < $GITHUB_WORKSPACE/init.sql 
+      run: docker exec -i mysql-db mysql -u root -prootpassword < $GITHUB_WORKSPACE/init.sql; 
        echo "Database Restoration Completed"
 
     - name: Display All Databases and Users Table Schema
