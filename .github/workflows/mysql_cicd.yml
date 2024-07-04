@@ -1,27 +1,32 @@
 name: Database Migration
 
-on: [push]
+on: 
+  push:
+    branches: 
+      - main
+    paths:
+      - 'dbscripts/**'
 
 jobs:
   migrate:
     runs-on: ubuntu-latest
 
     services:
-        mysql:
-          image: mysql:8.0
-          ports:
-            - 3306:3306
-          env:
-            MYSQL_ROOT_PASSWORD: rootpassword
-            MYSQL_USER: testuser
-            MYSQL_PASSWORD: testpassword
-          options: >-
-            --name mysql-db
-            --health-cmd="mysqladmin ping --silent"
-            --health-interval=10s
-            --health-timeout=5s
-            --health-retries=3
-  
+      mysql:
+        image: mysql:8.0
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_USER: testuser
+          MYSQL_PASSWORD: testpassword
+        options: >-
+          --name mysql-db
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -40,19 +45,22 @@ jobs:
       run: |
         docker exec -i mysql-db mysql -u root -prootpassword < $GITHUB_WORKSPACE/init.sql
 
-    - name: Display All Databases and Users Table Schema
+    - name: Run Liquibase migrations
       run: |
-        echo "Listing all databases and 'users' table schema for each database:"
+        LIQUIBASE_IMAGE="liquibase/liquibase"
+        CHANGELOG_FILE="/liquibase/changelog/db.changelog.xml"
+        URL_PREFIX="jdbc:mysql://mysql-db:3306/"
+
         for db in schema1 schema2 schema3 schema4 schema5 schema6 schema7 schema8 schema9 schema10; do
-            echo "Checking database: $db"
-            docker exec -i mysql-db mysql -u testuser -ptestpassword -e "USE $db; SHOW CREATE TABLE users;"
+            echo "Running Liquibase migration on database: $db"
+            docker run --rm --network host -v $GITHUB_WORKSPACE/dbscripts:/liquibase/changelog $LIQUIBASE_IMAGE \
+              --url="${URL_PREFIX}${db}" \
+              --username=testuser \
+              --password=testpassword \
+              --changeLogFile=$CHANGELOG_FILE \
+              connect
         done
 
-    # Run the migrations
-    
-
-
-    # Display All Databases and Users Table Schema (again) to confirm the migration
     - name: Display All Databases and Users Table Schema
       run: |
         echo "Listing all databases and 'users' table schema for each database:"
