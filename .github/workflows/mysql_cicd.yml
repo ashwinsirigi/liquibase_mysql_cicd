@@ -65,7 +65,7 @@ jobs:
           --password=rootpassword \
           --classpath=/liquibase/lib/mysql-connector-java.jar \
           --license-key=${LIQUIBASE_LICENSEKEY} \
-          connect
+          status
 
         
 
