@@ -60,9 +60,9 @@ jobs:
           --url="${URL_PREFIX}" \
           --username=testuser \
           --password=testpassword \
+          --classpath=/liquibase/lib/mysql-connector-java.jar \
           --license-key=${LIQUIBASE_LICENSEKEY} \
           --driver=${DB_DRIVER} \
-          --classpath=/liquibase/lib/mysql-connector-java.jar \          
           update
 
     - name: Display All Databases and Users Table Schema
