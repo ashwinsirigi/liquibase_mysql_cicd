@@ -46,6 +46,7 @@ jobs:
     - name: Download MySQL JDBC Driver
       run: |
         curl -L -o mysql-connector-java.jar https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.32/mysql-connector-java-8.0.32.jar
+        ls -l mysql-connector-java.jar
 
     - name: Run Liquibase migrations
       run: |
