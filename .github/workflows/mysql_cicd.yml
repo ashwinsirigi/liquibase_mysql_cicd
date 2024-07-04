@@ -62,8 +62,7 @@ jobs:
           --password=testpassword \
           --license-key=${LIQUIBASE_LICENSEKEY} \
           --driver=${DB_DRIVER} \
-          --classpath=/liquibase/lib/mysql-connector-java.jar
-          
+          --classpath=/liquibase/lib/mysql-connector-java.jar \          
           update
 
     - name: Display All Databases and Users Table Schema
