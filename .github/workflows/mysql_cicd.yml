@@ -4,8 +4,8 @@ on:
   push:
     branches: 
       - main
-#    paths:
-#      - 'dbscripts/**'
+    paths:
+      - 'dbscripts/**'
 
 jobs:
   migrate:
@@ -45,12 +45,28 @@ jobs:
       run: |
         docker exec -i mysql-db mysql -u root -prootpassword < $GITHUB_WORKSPACE/init.sql
 
-    - name: Run Liquibase migrations
+    - name: Run Liquibase and database connect
+      run: |
+        LIQUIBASE_IMAGE="liquibase/liquibase"
+        CHANGELOG_FILE="/liquibase/changelog/change.sql"
+        URL_PREFIX="jdbc:mysql://mysql-db:3306/schema1"
+		
+		docker run --rm --network host -v $GITHUB_WORKSPACE/dbscripts:/liquibase/changelog $LIQUIBASE_IMAGE \
+              --url="${URL_PREFIX}" \
+              --username=testuser \
+              --password=testpassword \
+              --changeLogFile=$CHANGELOG_FILE \
+			  --license-key=${{secrets.LIQUIBASE_LICENSEKEY}} \
+			  --driver=com.mysql.cj.jdbc.Driver \
+              connect
+
+    - name: Run Liquibase & check status
       run: |
         LIQUIBASE_IMAGE="liquibase/liquibase"
         CHANGELOG_FILE="/liquibase/changelog/change.sql"
         URL_PREFIX="jdbc:mysql://mysql-db:3306/"
-        
+		
+
         for db in schema1 schema2 schema3 schema4 schema5 schema6 schema7 schema8 schema9 schema10; do
             echo "Running Liquibase migration on database: $db"
             docker run --rm --network host -v $GITHUB_WORKSPACE/dbscripts:/liquibase/changelog $LIQUIBASE_IMAGE \
@@ -58,8 +74,9 @@ jobs:
               --username=testuser \
               --password=testpassword \
               --changeLogFile=$CHANGELOG_FILE \
-              --license-key=${{secrets.LIQUIBASE_LICENSEKEY}} \
-              validate
+			  --license-key=${{secrets.LIQUIBASE_LICENSEKEY}} \
+			  --driver=com.mysql.cj.jdbc.Driver \
+              status
         done
 
     - name: Display All Databases and Users Table Schema
