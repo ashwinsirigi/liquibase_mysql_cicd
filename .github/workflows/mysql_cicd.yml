@@ -43,11 +43,24 @@ jobs:
       run: |
         docker exec -i mysql-db mysql -u root -prootpassword < $GITHUB_WORKSPACE/init.sql
 
+    - name: Display All Databases and Users Table Schema
+      run: |
+        echo "Listing all databases and 'users' table schema for each database:"
+        for db in schema1 schema2 schema3 schema4 schema5 schema6 schema7 schema8 schema9 schema10; do
+            echo "Checking database: $db"
+            docker exec -i mysql-db mysql -u testuser -ptestpassword -e "USE $db; SHOW CREATE TABLE users;"
+        done    
+
+    - name: Ceating docker network
+      run: |
+         docker network create my-network
+
     - name: Download MySQL JDBC Driver
       run: |
         curl -L -o mysql-connector-java.jar https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.32/mysql-connector-java-8.0.32.jar
         ls -l mysql-connector-java.jar
-
+        
+        
     - name: Run Liquibase migrations
       run: |
         LIQUIBASE_IMAGE="ashwinsirigi/liquibase-mysql-driver"
@@ -64,7 +77,7 @@ jobs:
           --classpath=/liquibase/lib/mysql-connector-java.jar \
           --license-key=${LIQUIBASE_LICENSEKEY} \
           --driver=${DB_DRIVER} \
-          update
+          connect
 
     - name: Display All Databases and Users Table Schema
       run: |
