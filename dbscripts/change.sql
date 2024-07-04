@@ -12,12 +12,5 @@ create table usercontact (id int primary key , phone varchar(15),addr varchar(10
 --comment: creating new table
 create table usercontact1 (id int primary key , phone varchar(15),addr varchar(100));
 
---changeset usercontact1-drop-tab:3 labels:usercontact1-drop-tab-label context:usercontact1-drop-tab-context
---comment: drop table
-drop table usercontact1 ;
-
---changeset usercontact2-drop-tab:3 labels:usercontact1-drop-tab-label context:usercontact1-drop-tab-context
---comment: drop table
-drop table usercontact ;
 
 
