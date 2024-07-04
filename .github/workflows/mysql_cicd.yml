@@ -9,21 +9,24 @@ jobs:
   migrate:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_USER: testuser
+          MYSQL_PASSWORD: testpassword
+        options: >-
+          --name mysql-db
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
-    - name: Create Docker Network
-      run: docker network create my-network
-
-    - name: Start MySQL Service
-      run: |
-        docker run -d --name mysql-db --network my-network \
-          -e MYSQL_ROOT_PASSWORD=rootpassword \
-          -e MYSQL_USER=testuser \
-          -e MYSQL_PASSWORD=testpassword \
-          -e MYSQL_DATABASE=schema1 \
-          mysql:8.0
 
     - name: Wait for MySQL to be ready
       run: |
@@ -34,24 +37,36 @@ jobs:
           echo 'MySQL not ready yet...'
           sleep 1
         done
-
+    
     - name: Initialize Database Schemas and Grant Permissions
       run: |
         docker exec -i mysql-db mysql -u root -prootpassword < $GITHUB_WORKSPACE/init.sql
-
+    - name: Display All Databases and Users Table Schema
+      run: |
+        echo "Listing all databases and 'users' table schema for each database:"
+        for db in schema1 schema2 schema3 schema4 schema5 schema6 schema7 schema8 schema9 schema10; do
+            echo "Checking database: $db"
+            docker exec -i mysql-db mysql -u testuser -ptestpassword -e "USE $db; SHOW CREATE TABLE users;"
+        done    
+    - name: Ceating docker network
+      run: |
+         docker network create my-network
+         
     - name: Download MySQL JDBC Driver
       run: |
         curl -L -o mysql-connector-java.jar https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.32/mysql-connector-java-8.0.32.jar
         ls -l mysql-connector-java.jar
-
+        
+        
     - name: Run Liquibase migrations
       run: |
         LIQUIBASE_IMAGE="ashwinsirigi/liquibase-mysql-driver"
         CHANGELOG_FILE="/liquibase/changelog/change.sql"
-        URL_PREFIX="jdbc:mysql://mysql-db:3306/schema1"
+        dockerhost=$(docker inspect test-mysql | grep '"IPAddress": ' | cut -d':' -f2 | tr -d ' ' | tr -d "," |tr  -d '"' | head -n 1
+        URL_PREFIX="jdbc:mysql://$dockerhost:3306/schema1"
         LIQUIBASE_LICENSEKEY="ABwwGgQUDvg+TwPk6F7EmjJg6gLEDLZj3OwCAgQAJJ5Jc0vNRRNw2+eZgro/35pG6BZu+MvhRd+vS9n5TzBhC0NcrYT8iO6BB90jcxfL/0mm0OIMe+Pxav/1lw9DjQo7b6Ubf5rnXo9yFnm2Szo8E2+A5x/Fdgg57ah2OGQFVJUD1kNrHNTSxeu0UN2yevASADRTfgiSC1FPo32X/B3LSr29ItF0qsTSbFONdbOFASSaAxI9ZAsIEG18WfZfSNMn0N7lRdRpQekxjGngepZiBY0S5I4lkL3mCikbWk8R7KfmATWUvVXpNP8tbSPCbAe/vRrgdX4QyakARO+jwddwinlMoF6afkBTDJ3OqQ9jFOMFeCb9EJPI608mlHjYVytQgQ1kwsEkdjM1lT+Dz8mtXc/XBagHFrgxutAVZrjQB7MxqasiLNpJEExO80oy6QWaEkTuMSjx29sfU77OYNV9GBUZ1iA3fny1lq98cMYGj1f57tJr8JFFZ/di8V0QJdx7t/7t3JjFPEFuubPGuv3RU47eR/MdFsi57H8dBxmaQQqxlNyxBilUUXWEm0E87gERv4QHgNh1g+RGXhcWN6YaQqFHyaufw0F1VGmDsgKK/C7drQdrXHC5HxCL5wQs2xhIdcDtZYW8goF7oud/cuJklq/YotaU+EEGoFYewGcOSSi7P1PlWnvgHvQkye7gh0W6dblgSoJv"
         DB_DRIVER="com.mysql.cj.jdbc.Driver"
-
+        
         docker run --rm --network my-network -v $GITHUB_WORKSPACE/dbscripts:/liquibase/changelog -v $(pwd)/mysql-connector-java.jar:/liquibase/lib/mysql-connector-java.jar $LIQUIBASE_IMAGE \
           --changeLogFile=${CHANGELOG_FILE} \
           --url="${URL_PREFIX}" \
@@ -60,8 +75,7 @@ jobs:
           --classpath=/liquibase/lib/mysql-connector-java.jar \
           --license-key=${LIQUIBASE_LICENSEKEY} \
           --driver=${DB_DRIVER} \
-          update
-
+          connect
     - name: Display All Databases and Users Table Schema
       run: |
         echo "Listing all databases and 'users' table schema for each database:"
@@ -69,6 +83,3 @@ jobs:
           echo "Checking database: $db"
           docker exec -i mysql-db mysql -u testuser -ptestpassword -e "USE $db; SHOW CREATE TABLE users;"
         done
-
-    - name: Remove Docker Network
-      run: docker network rm my-network
