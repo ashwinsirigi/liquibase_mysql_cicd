@@ -59,7 +59,7 @@ jobs:
               --password=testpassword \
               --changeLogFile=$CHANGELOG_FILE \
               --license-key=${{secrets.LIQUIBASE_LICENSEKEY}} \
-              --driver=com.mysql.cj.jdbc.Driver \
+             # --driver=com.mysql.cj.jdbc.Driver \
               validate
         done
 
