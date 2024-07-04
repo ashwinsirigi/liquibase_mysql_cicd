@@ -4,8 +4,8 @@ on:
   push:
     branches: 
       - mysql_cicd_update1
-    paths:
-      - '/dbscripts/deploy/**'
+ #   paths:
+ #     - '/dbscripts/deploy/**'
 
 jobs:
   migrate:
