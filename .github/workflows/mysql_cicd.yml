@@ -78,4 +78,12 @@ jobs:
           liquibase --changelog-file=change.sql --url=jdbc:mysql://mysql-db:3306/schema1 --username=root --password=rootpassword --license-key=${LIQUIBASE_LICENSEKEY} updateSQL &&
           liquibase --changelog-file=change.sql --url=jdbc:mysql://mysql-db:3306/schema1 --username=root --password=rootpassword --license-key=${LIQUIBASE_LICENSEKEY} update "
 
+    - name: Display All Databases and Users Table Schema Finally After the changes
+      run: |
+        echo "Listing all databases and 'users' table schema for each database:"
+        for db in schema1 schema2 schema3 schema4 schema5 schema6 schema7 schema8 schema9 schema10; do
+          echo "Checking database: $db"
+          docker exec -i mysql-db mysql -u testuser -ptestpassword -e "USE $db; SHOW CREATE TABLE users;"
+        done     
+
 
