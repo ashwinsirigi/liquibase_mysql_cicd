@@ -9,6 +9,6 @@ ALTER TABLE users ADD COLUMN age INT,algorithm=inplace,lock=none;
 <<<<<<< HEAD
 create table usercontact (id int primary key , phone varchar(15),addr varchar(100));    
 =======
-create table usercontact (id int primary key , phone varchar(15),addr varchar(100)); 
+create table usercontact (id int primary key , phone varchar(15),addr varchar(100));  
 >>>>>>> 20122cb2cbce8a0c827f96071e3d9297f7b43224
 
