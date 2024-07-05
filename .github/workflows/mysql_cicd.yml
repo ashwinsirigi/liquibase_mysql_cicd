@@ -4,8 +4,8 @@ on:
   push:
     branches: 
       - main
- #   paths:
- #     - '/dbscripts/deploy/**'
+    paths:
+      - '/dbscripts/**'
 
 jobs:
   migrate:
@@ -53,28 +53,18 @@ jobs:
           docker exec -i mysql-db mysql -u testuser -ptestpassword -e "USE $db; SHOW CREATE TABLE users;"
         done    
 
-    - name: Create change.sql and verify whether file exists
+    - name: Verify change.sql file exists
       run: |
-        echo  "--liquibase formatted sql
-              --changeset users-age-new-col-add:1 labels:users-age-new-col-add-label context:users-age-new-col-add-context
-               --comment: newcolumnaddition
-              ALTER TABLE users ADD COLUMN age INT,algorithm=inplace,lock=none;" > $GITHUB_WORKSPACE/change.sql 
-      
-      
-        if [ ! -f "$GITHUB_WORKSPACE/change.sql" ]; then
+        
+        if [ ! -f "$GITHUB_WORKSPACE/dbscripts/change.sql" ]; then
           echo "change.sql file not found!"
           exit 1
         else
-          echo "change.sql file exists $GITHUB_WORKSPACE/change.sql"
+          echo "change.sql file exists $GITHUB_WORKSPACE/dbscripts/change.sql"
         fi      
         
     - name: Run Liquibase Migration For Each Database 
       run: |
-      
-        LIQUIBASE_IMAGE="liquibase/liquibase"
-        CHANGELOG_FILE="$GITHUB_WORKSPACE/masterChangeLog.xml"
-        DB_DRIVER="com.mysql.cj.jdbc.Driver"
-        
         echo "Running Migration on all Databases"
         for db in schema1 schema2 schema3 schema4 schema5 schema6 schema7 schema8 schema9 schema10; do
             
@@ -85,7 +75,7 @@ jobs:
         LIQUIBASE_LICENSEKEY="ABwwGgQUDvg+TwPk6F7EmjJg6gLEDLZj3OwCAgQAJJ5Jc0vNRRNw2+eZgro/35pG6BZu+MvhRd+vS9n5TzBhC0NcrYT8iO6BB90jcxfL/0mm0OIMe+Pxav/1lw9DjQo7b6Ubf5rnXo9yFnm2Szo8E2+A5x/Fdgg57ah2OGQFVJUD1kNrHNTSxeu0UN2yevASADRTfgiSC1FPo32X/B3LSr29ItF0qsTSbFONdbOFASSaAxI9ZAsIEG18WfZfSNMn0N7lRdRpQekxjGngepZiBY0S5I4lkL3mCikbWk8R7KfmATWUvVXpNP8tbSPCbAe/vRrgdX4QyakARO+jwddwinlMoF6afkBTDJ3OqQ9jFOMFeCb9EJPI608mlHjYVytQgQ1kwsEkdjM1lT+Dz8mtXc/XBagHFrgxutAVZrjQB7MxqasiLNpJEExO80oy6QWaEkTuMSjx29sfU77OYNV9GBUZ1iA3fny1lq98cMYGj1f57tJr8JFFZ/di8V0QJdx7t/7t3JjFPEFuubPGuv3RU47eR/MdFsi57H8dBxmaQQqxlNyxBilUUXWEm0E87gERv4QHgNh1g+RGXhcWN6YaQqFHyaufw0F1VGmDsgKK/C7drQdrXHC5HxCL5wQs2xhIdcDtZYW8goF7oud/cuJklq/YotaU+EEGoFYewGcOSSi7P1PlWnvgHvQkye7gh0W6dblgSoJv"
         
         docker run -e INSTALL_MYSQL=true --network my-network \
-          -v $GITHUB_WORKSPACE/:/liquibase/changelog \
+          -v $GITHUB_WORKSPACE/dbscripts:/liquibase/changelog \
           liquibase/liquibase /bin/bash -c "
           cd /liquibase/changelog &&
           liquibase --changelog-file=change.sql --url=${URL_PREFIX} --username=root --password=rootpassword --license-key=${LIQUIBASE_LICENSEKEY} status &&
