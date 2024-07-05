@@ -78,7 +78,7 @@ jobs:
         echo "Running Migration on all Databases"
         for db in schema1 schema2 schema3 schema4 schema5 schema6 schema7 schema8 schema9 schema10; do
             
-        URL_PREFIX="jdbc:mysql://mysql-db:3306/${db}"
+        URL_PREFIX="jdbc:mysql://mysql-db:3306/${db}" 
         
         echo "Checking URL For Each Database: $URL_PREFIX"
         
