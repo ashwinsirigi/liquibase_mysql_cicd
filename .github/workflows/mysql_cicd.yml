@@ -53,11 +53,11 @@ jobs:
           docker exec -i mysql-db mysql -u testuser -ptestpassword -e "USE $db; SHOW CREATE TABLE users;"
         done    
 
-    - name: Verify change.sql file exists
+    - name: Create change.sql and verify whether file exists
       run: |
         echo  "--liquibase formatted sql
               --changeset users-age-new-col-add:1 labels:users-age-new-col-add-label context:users-age-new-col-add-context
-               --comment: examplecomment
+               --comment: newcolumnaddition
               ALTER TABLE users ADD COLUMN age INT,algorithm=inplace,lock=none;" > $GITHUB_WORKSPACE/change.sql 
       
       
