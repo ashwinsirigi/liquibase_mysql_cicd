@@ -56,9 +56,9 @@ jobs:
     - name: Verify change.sql file exists
       run: |
         echo  "--liquibase formatted sql
---changeset users-age-new-col-add:1 labels:users-age-new-col-add-label context:users-age-new-col-add-context
---comment: example comment
-ALTER TABLE users ADD COLUMN age INT,algorithm=inplace,lock=none;" > $GITHUB_WORKSPACE/change.sql 
+              --changeset users-age-new-col-add:1 labels:users-age-new-col-add-label context:users-age-new-col-add-context
+               --comment: examplecomment
+              ALTER TABLE users ADD COLUMN age INT,algorithm=inplace,lock=none;" > $GITHUB_WORKSPACE/change.sql 
       
       
         if [ ! -f "$GITHUB_WORKSPACE/change.sql" ]; then
